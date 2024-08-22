@@ -16,31 +16,46 @@ let perguntaAtual;
 let historiaFinal = "";
 
 botaoIniciar.addEventListener('click', iniciaJogo);
+botaoJogarNovamente.addEventListener('click', iniciaJogo);
 
 function iniciaJogo() {
-atual = 0;
-historiaFinal = "";
-telaInicial.style.display = 'none';
-caixaPerguntas.classList.remove("mostrar");
-caixaAlternativas.classList.remove("mostrar");
-caixaResultado.classList.remove("mostrar");
-nomePersonagem.textContent = nome;
-mostraPergunta();
+    atual = 0;
+    historiaFinal = "";
+    telaInicial.style.display = 'none';
+    caixaPerguntas.classList.add("mostrar");
+    caixaAlternativas.classList.add("mostrar");
+    caixaResultado.classList.remove("mostrar");
+    nomePersonagem.textContent = nome;
+    mostraPergunta();
 }
 
 function mostraPergunta() {
-if (atual >= perguntas.length) {
-mostraResultado();
-return;
-}
-perguntaAtual = perguntas[atual];
-caixaPerguntas.textContent = perguntaAtual.enunciado;
-caixaAlternativas.textContent = "";
-mostraAlternativas();
+    if (atual >= perguntas.length) {
+        mostraResultado();
+        return;
+    }
+    perguntaAtual = perguntas[atual];
+    caixaPerguntas.textContent = perguntaAtual.enunciado;
+    caixaAlternativas.innerHTML = ""; // Clear previous alternatives
+    mostraAlternativas();
 }
 
 function mostraAlternativas() {
-for (const alternativa of perguntaAtual.alternativas) {
-const botaoAlternativas = document.createElement("button");
-botaoAlternativas.textContent = alternativa.texto;
-botaoAlternativas.addEventListener("click", () => resposta
+    for (const alternativa of perguntaAtual.alternativas) {
+        const botaoAlternativa = document.createElement("button");
+        botaoAlternativa.textContent = alternativa.texto;
+        botaoAlternativa.addEventListener("click", () => {
+            historiaFinal += alternativa.afirmacao.join(" ");
+            atual = alternativa.proxima;
+            mostraPergunta();
+        });
+        caixaAlternativas.appendChild(botaoAlternativa);
+    }
+}
+
+function mostraResultado() {
+    caixaPerguntas.classList.remove("mostrar");
+    caixaAlternativas.classList.remove("mostrar");
+    caixaResultado.classList.add("mostrar");
+    textoResultado.textContent = historiaFinal;
+}
